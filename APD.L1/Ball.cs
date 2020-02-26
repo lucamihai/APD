@@ -1,28 +1,25 @@
 ﻿using System.Drawing;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace APD.L1
 {
     public class Ball
     {
-        private readonly MainForm parent;
+        private readonly Control parent;
         private readonly Thread ballThread;
 
-        public int Px { get; private set; }
-        public int Py { get; private set; }
-        public int Size { get; private set; }
-        public Color Color { get; private set; }
+        public int Px { get;  set; }
+        public int Py { get;  set; }
+        public int Size { get;  set; }
+        public Color Color { get;  set; }
         public int SpeedX { get; set; }
         public int SpeedY { get; set; }
         public int RefreshRateInMilliseconds { get; set; }
 
-        public Ball(MainForm parent, int px, int py, int size, Color color)
+        public Ball(Control parent)
         {
             this.parent = parent;
-            Px = px;
-            Py = py;
-            Size = size;
-            Color = color;
 
             RefreshRateInMilliseconds = 20;
 
@@ -50,7 +47,7 @@ namespace APD.L1
 
                 parent.Refresh();
 
-                if (Py > parent.LabelBallSize.Height - Size)
+                if (Py > parent.Height - Size)
                 {
                     speedy = speed;
                     speed += 3;
@@ -72,12 +69,12 @@ namespace APD.L1
                 Px += speedX;
                 Py += speedY;
 
-                if (Px <= 0 || Px >= parent.LabelBallSize.Width - Size)
+                if (Px <= 0 || Px >= parent.Width - Size)
                 {
                     speedX *= -1;
                 }
 
-                if (Py <= 0 || Py >= parent.LabelBallSize.Height - Size)
+                if (Py <= 0 || Py >= parent.Height - Size)
                 {
                     speedY *= -1;
                 }

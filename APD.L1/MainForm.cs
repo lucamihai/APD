@@ -10,7 +10,6 @@ namespace APD.L1
         private readonly List<Ball> balls;
         public Size LabelBallSize { get; set; }
 
-
         public MainForm()
         {
             InitializeComponent();
@@ -20,9 +19,33 @@ namespace APD.L1
 
             balls = new List<Ball>
             {
-                new Ball(this, 0, 50, 50, Color.Blue) {SpeedX = 5, SpeedY = 10},
-                new Ball(this, 55, 50, 50, Color.Yellow) {SpeedX = 6, SpeedY = 9},
-                new Ball(this, 110, 50, 50, Color.Red) {SpeedX = 7, SpeedY = 2},
+                new Ball(labelBalls)
+                {
+                    Px = 25,
+                    Py = 50,
+                    Size = 25,
+                    Color = Color.Blue,
+                    SpeedX = 5,
+                    SpeedY = 10
+                },
+                new Ball(labelBalls)
+                {
+                    Px = 11,
+                    Py = 100,
+                    Size = 40,
+                    Color = Color.Yellow,
+                    SpeedX = 6,
+                    SpeedY = 9
+                },
+                new Ball(labelBalls)
+                {
+                    Px = 200,
+                    Py = 13,
+                    Size = 50,
+                    Color = Color.Red,
+                    SpeedX = 7,
+                    SpeedY = 2
+                },
             };
         }
 
@@ -34,11 +57,6 @@ namespace APD.L1
 
         private void MyForm_Paint(object sender, PaintEventArgs e)
         {
-            //using (var brush = new SolidBrush(Color.White))
-            //{
-            //    e.Graphics.FillRectangle(brush, 0, 0, Size.Width, Size.Height);
-            //}
-
             for (int index = 0; index < balls.Count; index++)
             {
                 var currentBall = balls[index];

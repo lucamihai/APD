@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
+using APD.L1.Entities;
 
 namespace APD.L1
 {
     public partial class MainForm : Form
     {
-        private readonly List<Ball> balls;
+        private List<Ball> balls;
+        private AdManager adManager;
         public Size LabelBallSize { get; set; }
 
         public MainForm()
@@ -17,11 +20,19 @@ namespace APD.L1
 
             this.BackColor = Color.White;
 
+            InitializeBalls();
+            InitializeAdManager();
+
+            adManager.StartDisplayingAds();
+        }
+
+        private void InitializeBalls()
+        {
             balls = new List<Ball>
             {
                 new Ball(labelBalls)
                 {
-                    Px = 25,
+                    Px = 41,
                     Py = 50,
                     Size = 25,
                     Color = Color.Blue,
@@ -49,6 +60,26 @@ namespace APD.L1
             };
         }
 
+        private void InitializeAdManager()
+        {
+            adManager = new AdManager(labelAds);
+
+            var csvLines = File.ReadAllLines($"{AppDomain.CurrentDomain.BaseDirectory}\\AdInformation.csv");
+
+            for (int index = 1; index < csvLines.Length; index++)
+            {
+                var csvLine = csvLines[index];
+                var splitValues = csvLine.Split(',');
+
+                adManager.AdInformationList.Add(new AdInformation
+                {
+                    ImageFilePath = splitValues[0],
+                    RedirectTo = splitValues[1],
+                    Priority = Convert.ToInt32(splitValues[2])
+                });
+            }
+        }
+
         private void MyForm_Load(object sender, EventArgs e)
         {
             LabelBallSize = labelBalls.Size;
@@ -74,6 +105,8 @@ namespace APD.L1
             {
                 balls[index].TerminateBallThread();
             }
+
+            adManager.StopDisplayingAds();
         }
     }
 }

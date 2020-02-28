@@ -2,17 +2,17 @@
 using System.Threading;
 using System.Windows.Forms;
 
-namespace APD.L1
+namespace APD.L1.Entities
 {
     public class Ball
     {
         private readonly Control parent;
         private readonly Thread ballThread;
 
-        public int Px { get;  set; }
-        public int Py { get;  set; }
-        public int Size { get;  set; }
-        public Color Color { get;  set; }
+        public int Px { get; set; }
+        public int Py { get; set; }
+        public int Size { get; set; }
+        public Color Color { get; set; }
         public int SpeedX { get; set; }
         public int SpeedY { get; set; }
         public int RefreshRateInMilliseconds { get; set; }
@@ -23,7 +23,7 @@ namespace APD.L1
 
             RefreshRateInMilliseconds = 20;
 
-            ballThread = new Thread(new ThreadStart(() => Run(SpeedX, SpeedY)));
+            ballThread = new Thread(() => Run(SpeedX, SpeedY));
             ballThread.Start();
         }
 

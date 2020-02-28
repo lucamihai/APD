@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using APD.L1.Entities;
+using APD.L2.Entities;
 
-namespace APD.L1
+namespace APD.L2
 {
     public partial class MainForm : Form
     {

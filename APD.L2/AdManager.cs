@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using APD.L1.Entities;
+using APD.L2.Entities;
 
-namespace APD.L1
+namespace APD.L2
 {
     public class AdManager
     {

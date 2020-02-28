@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Windows.Forms;
 
-namespace APD.L1.Entities
+namespace APD.L2.Entities
 {
     public class Ball
     {

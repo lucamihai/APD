@@ -1,4 +1,4 @@
-﻿namespace APD.L1.Entities
+﻿namespace APD.L2.Entities
 {
     public class AdInformation
     {

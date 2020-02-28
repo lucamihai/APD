@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace APD.L1.Properties
+namespace APD.L2.Properties
 {
 
 

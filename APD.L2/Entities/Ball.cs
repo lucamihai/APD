@@ -9,12 +9,11 @@ namespace APD.L2.Entities
         private readonly Control parent;
         private readonly Thread ballThread;
 
-        public int Px { get; set; }
-        public int Py { get; set; }
+        public Point Position { get; set; }
+        public Point Speed { get; set; }
         public int Size { get; set; }
         public Color Color { get; set; }
-        public int SpeedX { get; set; }
-        public int SpeedY { get; set; }
+        
         public int RefreshRateInMilliseconds { get; set; }
 
         public Ball(Control parent)
@@ -23,7 +22,7 @@ namespace APD.L2.Entities
 
             RefreshRateInMilliseconds = 20;
 
-            ballThread = new Thread(() => Run(SpeedX, SpeedY));
+            ballThread = new Thread(() => Run(Speed.X, Speed.Y));
             ballThread.Start();
         }
 
@@ -36,20 +35,23 @@ namespace APD.L2.Entities
         {
             var gravy = 1;
             var speed = -30;
-            var speedy = -30;
-            var speedx = 0;
+            var speedY = -30;
+            var speedX = 0;
 
             while (true)
             {
-                speedy += gravy;
-                Py += speedy;
-                Px += speedx;
+                speedY += gravy;
+                Position = new Point
+                {
+                    X = Position.X + speedX,
+                    Y = Position.Y + speedY
+                };
 
                 parent.Refresh();
 
-                if (Py > parent.Height - Size)
+                if (Position.Y > parent.Height - Size)
                 {
-                    speedy = speed;
+                    speedY = speed;
                     speed += 3;
                 }
 
@@ -66,15 +68,18 @@ namespace APD.L2.Entities
         {
             while (true)
             {
-                Px += speedX;
-                Py += speedY;
+                Position = new Point
+                {
+                    X = Position.X + speedX,
+                    Y = Position.Y + speedY
+                };
 
-                if (Px <= 0 || Px >= parent.Width - Size)
+                if (Position.X <= 0 || Position.X >= parent.Width - Size)
                 {
                     speedX *= -1;
                 }
 
-                if (Py <= 0 || Py >= parent.Height - Size)
+                if (Position.Y <= 0 || Position.Y >= parent.Height - Size)
                 {
                     speedY *= -1;
                 }
@@ -85,5 +90,4 @@ namespace APD.L2.Entities
             }
         }
     }
-
 }

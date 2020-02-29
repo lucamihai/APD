@@ -32,30 +32,24 @@ namespace APD.L2
             {
                 new Ball(labelBalls)
                 {
-                    Px = 41,
-                    Py = 50,
+                    Position = new Point(41, 50),
+                    Speed = new Point(5, 10),
                     Size = 25,
                     Color = Color.Blue,
-                    SpeedX = 5,
-                    SpeedY = 10
                 },
                 new Ball(labelBalls)
                 {
-                    Px = 11,
-                    Py = 100,
+                    Position = new Point(11, 100),
                     Size = 40,
                     Color = Color.Yellow,
-                    SpeedX = 6,
-                    SpeedY = 9
+                    Speed = new Point(6, 9)
                 },
                 new Ball(labelBalls)
                 {
-                    Px = 200,
-                    Py = 13,
+                    Position = new Point(200, 13),
                     Size = 50,
                     Color = Color.Red,
-                    SpeedX = 7,
-                    SpeedY = 2
+                    Speed = new Point(7, 2)
                 },
             };
         }
@@ -94,7 +88,7 @@ namespace APD.L2
 
                 using (var brush = new SolidBrush(currentBall.Color))
                 {
-                    e.Graphics.FillEllipse(brush, currentBall.Px, currentBall.Py, currentBall.Size, currentBall.Size);
+                    e.Graphics.FillEllipse(brush, currentBall.Position.X, currentBall.Position.Y, currentBall.Size, currentBall.Size);
                 }
             }
         }

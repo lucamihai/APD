@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using APD.L2.AdsOrderProviders;
 using APD.L2.Entities;
 
 namespace APD.L2
@@ -56,7 +57,7 @@ namespace APD.L2
 
         private void InitializeAdManager()
         {
-            adManager = new AdManager(labelAds);
+            adManager = new AdManager(labelAds, new AdsOrderProviderV1());
 
             var csvLines = File.ReadAllLines($"{AppDomain.CurrentDomain.BaseDirectory}\\AdInformation.csv");
 

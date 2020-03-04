@@ -47,8 +47,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdManager.cs" />
+    <Compile Include="AdsOrderProviders\AdsOrderProviderV1.cs" />
     <Compile Include="Entities\AdInformation.cs" />
     <Compile Include="Entities\Ball.cs" />
+    <Compile Include="Interfaces\IAdsOrderProvider.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -102,5 +104,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

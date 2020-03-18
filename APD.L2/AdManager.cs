@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using APD.L2.Entities;
+using APD.L2.Interfaces;
 
 namespace APD.L2
 {
@@ -12,19 +13,19 @@ namespace APD.L2
     {
         private readonly Control adContainer;
         private readonly Thread adDisplayThread;
-        private readonly Random rng;
+        private readonly IAdsOrderProvider adsOrderProvider;
 
         private AdInformation currentAd;
 
         public List<AdInformation> AdInformationList { get; private set; }
 
-        public AdManager(Control adContainer)
+        public AdManager(Control adContainer, IAdsOrderProvider adsOrderProvider)
         {
             this.adContainer = adContainer;
             adContainer.BackgroundImageLayout = ImageLayout.Stretch;
 
             adDisplayThread = new Thread(DisplayAds);
-            rng = new Random();
+            this.adsOrderProvider = adsOrderProvider;
 
             AdInformationList = new List<AdInformation>();
         }
@@ -62,18 +63,14 @@ namespace APD.L2
 
         private void DisplayAds()
         {
+            var adsToDisplayInOrder = adsOrderProvider.GetAdsToDisplayInOrder(AdInformationList);
+
             while (true)
             {
-                foreach (var adInformation in AdInformationList)
+                foreach (var adInformation in adsToDisplayInOrder)
                 {
-                    var shouldDisplayCurrentAd = rng.Next(0, 2) == 1;
-
-                    if (shouldDisplayCurrentAd)
-                    {
-                        currentAd = adInformation;
-                        DisplayCurrentAd(5000);
-                        break;
-                    }
+                    currentAd = adInformation;
+                    DisplayCurrentAd(5000);
                 }
             }
         }

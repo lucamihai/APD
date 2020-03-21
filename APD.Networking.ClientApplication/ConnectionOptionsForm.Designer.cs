@@ -66,6 +66,7 @@
             this.textBoxHostName.Name = "textBoxHostName";
             this.textBoxHostName.Size = new System.Drawing.Size(100, 26);
             this.textBoxHostName.TabIndex = 2;
+            this.textBoxHostName.Text = "localhost";
             // 
             // label1
             // 

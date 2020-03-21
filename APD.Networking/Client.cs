@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net.Sockets;
 
 namespace APD.Networking
@@ -14,32 +13,22 @@ namespace APD.Networking
         public Client(string hostname, int port)
         {
             tcpClient = new TcpClient(hostname, port);
-            stream = tcpClient.GetStream(); streamReader = new StreamReader(stream);
-            streamWriter = new StreamWriter(stream); 
-            
-            SendString("Merge!"); 
-            stream.Close(); 
-            tcpClient.Close();
+            stream = tcpClient.GetStream();
+
+            streamReader = new StreamReader(stream);
+            streamWriter = new StreamWriter(stream);
         }
 
-        public void SendInt(int val)
+        public void Stop()
         {
-            streamWriter.WriteLine(Convert.ToString(val)); 
-            streamWriter.Flush();
+            stream.Close();
+            tcpClient.Close();
         }
 
         public void SendString(string message)
         {
             streamWriter.WriteLine(message);
             streamWriter.Flush();
-        }
-
-        public int ReceiveInt()
-        {
-            var receivedInt = Convert.ToInt32(streamReader.ReadLine()); 
-            Console.WriteLine(receivedInt);
-
-            return receivedInt;
         }
     }
 }

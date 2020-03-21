@@ -28,7 +28,7 @@ namespace APD.Networking.ServerApplication
                 }
                 else
                 {
-                    server.Stop();
+                    server?.Stop();
 
                     buttonServerStatus.Text = StartServerText;
 
@@ -46,6 +46,11 @@ namespace APD.Networking.ServerApplication
         private void buttonServerStatus_Click(object sender, System.EventArgs e)
         {
             ServerOnline = !ServerOnline;
+        }
+
+        private void ServerForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ServerOnline = false;
         }
     }
 }

@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
+using APD.Networking.Entities;
+using APD.Networking.Utilities;
 
 namespace APD.Networking
 {
     public class Server
     {
         private readonly TcpListener tcpListener;
-        private readonly ConcurrentDictionary<string, TcpClient> tcpClients;
-        private readonly Thread threadListenMessages;
+        private readonly Dictionary<string, Listener> listeners;
         private readonly Thread threadNewConnections;
+        private readonly MessageMapper messageMapper;
 
         public int Port { get; }
 
@@ -25,12 +24,12 @@ namespace APD.Networking
             tcpListener = new TcpListener(System.Net.IPAddress.Any, port);
             tcpListener.Start();
 
-            tcpClients = new ConcurrentDictionary<string, TcpClient>();
+            listeners = new Dictionary<string, Listener>();
 
             threadNewConnections = new Thread(HandleNewConnections);
             threadNewConnections.Start();
-            threadListenMessages = new Thread(HandleMessages);
-            threadListenMessages.Start();
+
+            messageMapper = new MessageMapper();
         }
 
         public void Stop()
@@ -38,60 +37,86 @@ namespace APD.Networking
             tcpListener.Stop();
 
             threadNewConnections.Abort();
-            threadListenMessages.Abort();
 
-            foreach (var tcpClient in tcpClients.Values)
+            foreach (var listener in listeners.Values)
             {
-                tcpClient.Close();
+                listener.Thread.Abort();
+                listener.TcpClient.Close();
             }
-        }
-
-        private void Run()
-        {
-
         }
 
         private void HandleNewConnections()
         {
             while (true)
             {
-                var tcpClient = tcpListener.AcceptTcpClientAsync();
-                tcpClient.ContinueWith(t => AddTcpClient(t.Result));
+                var tcpClient = tcpListener.AcceptTcpClient();
+                AddTcpClient(tcpClient);
             }
         }
 
-        private void HandleMessages()
+        private void HandleMessages(TcpClient tcpClient)
         {
             while (true)
             {
-                foreach (var tcpClient in tcpClients.Values.Where(x => x.Connected))
+                var stream = tcpClient.GetStream();
+                var streamReader = new StreamReader(stream);
+                var streamMessage = streamReader.ReadLine();
+
+                InterpretMessage(streamMessage);
+
+                if (!tcpClient.Connected)
                 {
-                    var stream = tcpClient.GetStream();
-                    var streamReader = new StreamReader(stream);
-                    var streamMessage = streamReader.ReadLine();
-
-                    InterpretMessage(streamMessage);
-
-                    stream.Close();
+                    break;
                 }
             }
         }
 
-        private void InterpretMessage(string message)
+        private void InterpretMessage(string stringMessage)
         {
-            if (string.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(stringMessage))
             {
                 return;
             }
 
+            var message = messageMapper.GetMessageFromString(stringMessage);
 
+            if (message.MessageType == MessageType.NotRecognized)
+            {
+                return;
+            }
+
+            if (message.MessageType == MessageType.Disconnect)
+            {
+                var senderListener = listeners[message.SourceUsername];
+                senderListener?.Stop();
+            }
+
+            if (message.MessageType == MessageType.Chat)
+            {
+
+            }
         }
 
         private void AddTcpClient(TcpClient tcpClient)
         {
             // TODO: Logic here to determine client username and add to tcpClients
-            var username = $"user{tcpClients.Count + 1}";
-            tcpClients.TryAdd(username, tcpClient);
+            var username = $"user{listeners.Count + 1}";
+
+            if (listeners.ContainsKey(username))
+            {
+                // TODO: Prompt for new username
+            }
+            else
+            {
+                var listener = new Listener
+                {
+                    TcpClient = tcpClient,
+                    Thread = new Thread(() => HandleMessages(tcpClient))
+                };
+
+                listeners.Add(username, listener);
+                listener.Thread.Start();
+            }
         }
     }
 }

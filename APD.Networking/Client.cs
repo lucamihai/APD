@@ -1,5 +1,7 @@
 ﻿using System.IO;
 using System.Net.Sockets;
+using APD.Networking.Entities;
+using APD.Networking.Utilities;
 
 namespace APD.Networking
 {
@@ -9,6 +11,8 @@ namespace APD.Networking
         private readonly NetworkStream stream;
         private readonly StreamReader streamReader;
         private readonly StreamWriter streamWriter;
+        private readonly MessageMapper messageMapper;
+        private string username;
 
         public Client(string hostname, int port)
         {
@@ -17,6 +21,10 @@ namespace APD.Networking
 
             streamReader = new StreamReader(stream);
             streamWriter = new StreamWriter(stream);
+
+            messageMapper = new MessageMapper();
+
+            username = "some username";
         }
 
         public void Stop()
@@ -25,9 +33,22 @@ namespace APD.Networking
             tcpClient.Close();
         }
 
-        public void SendString(string message)
+        public void SendString(string str)
         {
-            streamWriter.WriteLine(message);
+            // TODO: Determine destination
+            var destination = "insert destination here";
+
+            var message = new Message
+            {
+                MessageType = MessageType.Chat,
+                Value = str,
+                SourceUsername = username,
+                DestinationUsername = destination,
+            };
+            var messageAsString = messageMapper.GetStringFromMessage(message);
+
+            //streamWriter.WriteLine(str);
+            streamWriter.WriteLine(messageAsString);
             streamWriter.Flush();
         }
     }

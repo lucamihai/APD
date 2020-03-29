@@ -3,8 +3,12 @@
     public enum MessageType
     {
         Chat,
-        Username,
+        ClientConnected,
+        ClientDisconnected,
+        SendUsername,
         RequestUsername,
+        Ok,
+        Repeat,
         Disconnect,
         NotRecognized
     }

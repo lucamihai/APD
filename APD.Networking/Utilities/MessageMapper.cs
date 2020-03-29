@@ -7,12 +7,16 @@ namespace APD.Networking.Utilities
     {
         public Message GetMessageFromString(string messageString)
         {
-            return JsonConvert.DeserializeObject<Message>(messageString);
+            return string.IsNullOrWhiteSpace(messageString) 
+                ? new Message {MessageType = MessageType.NotRecognized} 
+                : JsonConvert.DeserializeObject<Message>(messageString);
         }
 
         public string GetStringFromMessage(Message message)
         {
-            return JsonConvert.SerializeObject(message);
+            return message == null 
+                ? string.Empty 
+                : JsonConvert.SerializeObject(message);
         }
     }
 }

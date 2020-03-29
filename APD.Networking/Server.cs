@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using APD.Networking.Entities;
@@ -51,6 +52,9 @@ namespace APD.Networking
             {
                 var tcpClient = tcpListener.AcceptTcpClient();
                 AddTcpClient(tcpClient);
+
+                NotifyClientOfOtherConnectedClients(tcpClient);
+                NotifyOtherClientsOfClientConnection(tcpClient);
             }
         }
 
@@ -61,8 +65,9 @@ namespace APD.Networking
                 var stream = tcpClient.GetStream();
                 var streamReader = new StreamReader(stream);
                 var streamMessage = streamReader.ReadLine();
+                var message = messageMapper.GetMessageFromString(streamMessage);
 
-                InterpretMessage(streamMessage);
+                InterpretMessage(message, tcpClient);
 
                 if (!tcpClient.Connected)
                 {
@@ -71,30 +76,48 @@ namespace APD.Networking
             }
         }
 
-        private void InterpretMessage(string stringMessage)
+        private void InterpretMessage(Message message, TcpClient sender)
         {
-            if (string.IsNullOrEmpty(stringMessage))
+            var messageType = message.MessageType;
+
+            if (messageType == MessageType.NotRecognized)
             {
                 return;
             }
 
-            var message = messageMapper.GetMessageFromString(stringMessage);
-
-            if (message.MessageType == MessageType.NotRecognized)
+            else if (messageType == MessageType.SendUsername)
             {
-                return;
+
             }
 
-            if (message.MessageType == MessageType.Disconnect)
+            else if (messageType == MessageType.Disconnect)
             {
                 var senderListener = listeners[message.SourceUsername];
                 senderListener?.Stop();
             }
 
-            if (message.MessageType == MessageType.Chat)
+            else if (messageType == MessageType.Chat)
             {
+                var otherClients = listeners
+                    .Values
+                    .Select(x => x.TcpClient)
+                    .Where(x => x != sender);
 
+                foreach (var tcpClient in otherClients)
+                {
+                    SendMessageToClient(message, tcpClient);
+                }
             }
+        }
+
+        private void SendMessageToClient(Message message, TcpClient tcpClient)
+        {
+            var stream = tcpClient.GetStream();
+            var streamWriter = new StreamWriter(stream);
+            var messageString = messageMapper.GetStringFromMessage(message);
+
+            streamWriter.WriteLine(messageString);
+            streamWriter.Flush();
         }
 
         private void AddTcpClient(TcpClient tcpClient)
@@ -105,6 +128,7 @@ namespace APD.Networking
             if (listeners.ContainsKey(username))
             {
                 // TODO: Prompt for new username
+                
             }
             else
             {
@@ -116,6 +140,43 @@ namespace APD.Networking
 
                 listeners.Add(username, listener);
                 listener.Thread.Start();
+            }
+        }
+
+        private void NotifyClientOfOtherConnectedClients(TcpClient tcpClient)
+        {
+            var otherClientsListeners = listeners
+                .Values
+                .Where(x => x.TcpClient != tcpClient);
+
+            foreach (var otherClientListener in otherClientsListeners)
+            {
+                var message = new Message
+                {
+                    MessageType = MessageType.ClientConnected,
+                    Value = listeners.First(x => x.Value == otherClientListener).Key
+                };
+
+                SendMessageToClient(message, tcpClient);
+            }
+        }
+
+        private void NotifyOtherClientsOfClientConnection(TcpClient tcpClient)
+        {
+            var message = new Message
+            {
+                MessageType = MessageType.ClientConnected,
+                Value = listeners.First(x => x.Value.TcpClient == tcpClient).Key
+            };
+
+            var otherClients = listeners
+                .Values
+                .Select(x => x.TcpClient)
+                .Where(x => x != tcpClient);
+
+            foreach (var otherTcpClient in otherClients)
+            {
+                SendMessageToClient(message, otherTcpClient);
             }
         }
     }

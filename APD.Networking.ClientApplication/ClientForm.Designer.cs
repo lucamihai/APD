@@ -37,11 +37,13 @@
             this.connectToServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label1 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonSend
             // 
+            this.buttonSend.Enabled = false;
             this.buttonSend.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonSend.Location = new System.Drawing.Point(692, 394);
             this.buttonSend.Name = "buttonSend";
@@ -75,9 +77,9 @@
             // 
             this.panelClientList.BackColor = System.Drawing.SystemColors.ControlDark;
             this.panelClientList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelClientList.Location = new System.Drawing.Point(19, 30);
+            this.panelClientList.Location = new System.Drawing.Point(19, 52);
             this.panelClientList.Name = "panelClientList";
-            this.panelClientList.Size = new System.Drawing.Size(147, 346);
+            this.panelClientList.Size = new System.Drawing.Size(147, 323);
             this.panelClientList.TabIndex = 8;
             // 
             // menuStrip1
@@ -86,7 +88,7 @@
             this.connectionToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(800, 27);
             this.menuStrip1.TabIndex = 12;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -96,28 +98,39 @@
             this.connectToServerToolStripMenuItem,
             this.disconnectToolStripMenuItem,
             this.checkConnectionToolStripMenuItem});
+            this.connectionToolStripMenuItem.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.connectionToolStripMenuItem.Name = "connectionToolStripMenuItem";
-            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
+            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(90, 23);
             this.connectionToolStripMenuItem.Text = "Connection";
             // 
             // connectToServerToolStripMenuItem
             // 
             this.connectToServerToolStripMenuItem.Name = "connectToServerToolStripMenuItem";
-            this.connectToServerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.connectToServerToolStripMenuItem.Size = new System.Drawing.Size(187, 24);
             this.connectToServerToolStripMenuItem.Text = "Connect to server";
             this.connectToServerToolStripMenuItem.Click += new System.EventHandler(this.connectToServerToolStripMenuItem_Click);
             // 
             // disconnectToolStripMenuItem
             // 
             this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(187, 24);
             this.disconnectToolStripMenuItem.Text = "Disconnect";
             // 
             // checkConnectionToolStripMenuItem
             // 
             this.checkConnectionToolStripMenuItem.Name = "checkConnectionToolStripMenuItem";
-            this.checkConnectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.checkConnectionToolStripMenuItem.Size = new System.Drawing.Size(187, 24);
             this.checkConnectionToolStripMenuItem.Text = "Check connection";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Times New Roman", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(16, 35);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(78, 15);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Other clients:";
             // 
             // ClientForm
             // 
@@ -125,6 +138,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.WindowFrame;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonSend);
             this.Controls.Add(this.textBoxMessage);
             this.Controls.Add(this.textBoxChat);
@@ -133,6 +147,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "ClientForm";
             this.Text = "ClientForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClientForm_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -151,5 +166,6 @@
         private System.Windows.Forms.ToolStripMenuItem connectToServerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkConnectionToolStripMenuItem;
+        private System.Windows.Forms.Label label1;
     }
 }

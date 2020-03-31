@@ -28,6 +28,8 @@ namespace APD.Networking.ClientApplication
 
             client.OnChatReceived += OnChatReceived;
             client.OnOtherClientConnected += OnOtherClientConnected;
+            client.OnOtherClientDisconnected += OnOtherClientDisconnected;
+            client.OnUsernameChanged += OnUsernameChanged;
         }
 
         private void OnChatReceived(string chatMessage, string sourceUsername, string destinationUsername)
@@ -44,6 +46,52 @@ namespace APD.Networking.ClientApplication
             {
                 var radioButton = GenerateRadioButtonForClient(username);
                 panelClientList.Controls.Add(radioButton);
+            });
+
+            Invoke(methodInvoker);
+        }
+
+        private void OnOtherClientDisconnected(string username)
+        {
+            var radioButtonForGivenUsername = panelClientList
+                .Controls
+                .OfType<RadioButton>()
+                .FirstOrDefault(x => x.Text == username);
+
+            if (radioButtonForGivenUsername == null)
+            {
+                return;
+            }
+
+            var methodInvoker = new MethodInvoker(() =>
+            {
+                if (radioButtonForGivenUsername.Checked)
+                {
+                    buttonSend.Enabled = false;
+                }
+
+                panelClientList.Controls.Remove(radioButtonForGivenUsername);
+
+            });
+
+            Invoke(methodInvoker);
+        }
+
+        private void OnUsernameChanged(string oldUsername, string newUsername)
+        {
+            var radioButtonForGivenUsername = panelClientList
+                .Controls
+                .OfType<RadioButton>()
+                .FirstOrDefault(x => x.Text == oldUsername);
+
+            if (radioButtonForGivenUsername == null)
+            {
+                return;
+            }
+
+            var methodInvoker = new MethodInvoker(() =>
+            {
+                radioButtonForGivenUsername.Text = newUsername;
             });
 
             Invoke(methodInvoker);
@@ -75,7 +123,7 @@ namespace APD.Networking.ClientApplication
 
             client.SendChat(textBoxMessage.Text, destinationUsername);
 
-            textBoxChat.Text += $"{DateTime.Now.ToShortTimeString()} {client.username} -> {destinationUsername}: {textBoxMessage.Text}{Environment.NewLine}";
+            textBoxChat.Text += $"{DateTime.Now.ToShortTimeString()} [{client.Username} -> {destinationUsername}]: {textBoxMessage.Text}{Environment.NewLine}";
 
             textBoxMessage.Text = string.Empty;
         }

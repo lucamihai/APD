@@ -6,8 +6,8 @@
         ClientConnected,
         ClientDisconnected,
         SendUsername,
-        RequestUsername,
         Ok,
+        NotOk,
         Repeat,
         Disconnect,
         NotRecognized

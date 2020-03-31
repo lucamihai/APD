@@ -15,7 +15,7 @@ namespace APD.Networking
         private readonly StreamWriter streamWriter;
         private readonly MessageMapper messageMapper;
         private readonly Thread threadListen;
-        public string username;
+        public string Username { get; set; }
 
         public List<string> OtherClients
         {
@@ -33,6 +33,9 @@ namespace APD.Networking
         public delegate void ChatReceived(string chatMessage, string sourceUsername, string destinationUsername);
         public ChatReceived OnChatReceived { get; set; } = delegate(string message, string sourceUsername, string destinationUsername) {  };
 
+        public delegate void UsernameChanged(string oldUsername, string newUsername);
+        public UsernameChanged OnUsernameChanged { get; set; } = delegate(string oldUsername, string newUsername) { };
+
         public delegate void OtherClientConnected(string username);
         public OtherClientConnected OnOtherClientConnected { get; set; } = delegate(string s) {  };
 
@@ -49,7 +52,7 @@ namespace APD.Networking
 
             messageMapper = new MessageMapper();
 
-            username = "some username";
+            Username = "some username";
 
             threadListen = new Thread(Listen);
             threadListen.Start();
@@ -59,6 +62,16 @@ namespace APD.Networking
 
         public void Stop()
         {
+            var message = new Message
+            {
+                MessageType = MessageType.Disconnect,
+                SourceUsername = Username
+            };
+
+            streamWriter.WriteLine(messageMapper.GetStringFromMessage(message));
+            streamWriter.Flush();
+
+            threadListen.Abort();
             stream.Close();
             tcpClient.Close();
         }
@@ -69,7 +82,7 @@ namespace APD.Networking
             {
                 MessageType = MessageType.Chat,
                 Value = str,
-                SourceUsername = username,
+                SourceUsername = Username,
                 DestinationUsername = destinationUserName,
             };
 
@@ -112,6 +125,12 @@ namespace APD.Networking
                 var otherClientUsername = message.Value;
                 otherClients.Remove(otherClientUsername);
                 OnOtherClientDisconnected(otherClientUsername);
+            }
+
+            if (messageType == MessageType.SendUsername)
+            {
+                OnUsernameChanged(Username, message.Value);
+                Username = message.Value;
             }
         }
     }

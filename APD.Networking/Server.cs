@@ -10,6 +10,8 @@ namespace APD.Networking
 {
     public class Server
     {
+        private int madeConnections = 0;
+
         private readonly TcpListener tcpListener;
         private readonly Dictionary<string, Listener> listeners;
         private readonly Thread threadNewConnections;
@@ -51,8 +53,10 @@ namespace APD.Networking
             while (true)
             {
                 var tcpClient = tcpListener.AcceptTcpClient();
+                madeConnections++;
                 AddTcpClient(tcpClient);
 
+                NotifyClientOfItsUsername(tcpClient);
                 NotifyClientOfOtherConnectedClients(tcpClient);
                 NotifyOtherClientsOfClientConnection(tcpClient);
             }
@@ -92,7 +96,10 @@ namespace APD.Networking
 
             else if (messageType == MessageType.Disconnect)
             {
+                NotifyOtherClientsOfDisconnectedClient(sender);
+
                 var senderListener = listeners[message.SourceUsername];
+                listeners.Remove(message.SourceUsername);
                 senderListener?.Stop();
             }
 
@@ -122,25 +129,26 @@ namespace APD.Networking
 
         private void AddTcpClient(TcpClient tcpClient)
         {
-            // TODO: Logic here to determine client username and add to tcpClients
-            var username = $"user{listeners.Count + 1}";
-
-            if (listeners.ContainsKey(username))
+            var username = $"user{madeConnections + 1}";
+            var listener = new Listener
             {
-                // TODO: Prompt for new username
-                
-            }
-            else
-            {
-                var listener = new Listener
-                {
-                    TcpClient = tcpClient,
-                    Thread = new Thread(() => HandleMessages(tcpClient))
-                };
+                TcpClient = tcpClient,
+                Thread = new Thread(() => HandleMessages(tcpClient))
+            };
 
-                listeners.Add(username, listener);
-                listener.Thread.Start();
-            }
+            listeners.Add(username, listener);
+            listener.Thread.Start();
+        }
+
+        private void NotifyClientOfItsUsername(TcpClient tcpClient)
+        {
+            var message = new Message
+            {
+                MessageType = MessageType.SendUsername,
+                Value = listeners.First(x => x.Value.TcpClient == tcpClient).Key
+            };
+
+            SendMessageToClient(message, tcpClient);
         }
 
         private void NotifyClientOfOtherConnectedClients(TcpClient tcpClient)
@@ -166,6 +174,25 @@ namespace APD.Networking
             var message = new Message
             {
                 MessageType = MessageType.ClientConnected,
+                Value = listeners.First(x => x.Value.TcpClient == tcpClient).Key
+            };
+
+            var otherClients = listeners
+                .Values
+                .Select(x => x.TcpClient)
+                .Where(x => x != tcpClient);
+
+            foreach (var otherTcpClient in otherClients)
+            {
+                SendMessageToClient(message, otherTcpClient);
+            }
+        }
+
+        private void NotifyOtherClientsOfDisconnectedClient(TcpClient tcpClient)
+        {
+            var message = new Message
+            {
+                MessageType = MessageType.ClientDisconnected,
                 Value = listeners.First(x => x.Value.TcpClient == tcpClient).Key
             };
 

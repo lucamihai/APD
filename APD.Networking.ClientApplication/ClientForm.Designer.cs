@@ -61,10 +61,10 @@
             this.textBoxMessage.BackColor = System.Drawing.SystemColors.ControlDark;
             this.textBoxMessage.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxMessage.Location = new System.Drawing.Point(274, 446);
-            this.textBoxMessage.Multiline = true;
             this.textBoxMessage.Name = "textBoxMessage";
             this.textBoxMessage.Size = new System.Drawing.Size(671, 26);
             this.textBoxMessage.TabIndex = 10;
+            this.textBoxMessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxMessage_KeyDown);
             // 
             // textBoxChat
             // 
@@ -91,7 +91,7 @@
             this.connectionToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1103, 27);
+            this.menuStrip1.Size = new System.Drawing.Size(1052, 27);
             this.menuStrip1.TabIndex = 12;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -174,7 +174,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.WindowFrame;
-            this.ClientSize = new System.Drawing.Size(1103, 487);
+            this.ClientSize = new System.Drawing.Size(1052, 487);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.buttonEditUsername);
             this.Controls.Add(this.textBoxUsername);

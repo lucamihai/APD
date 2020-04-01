@@ -129,6 +129,20 @@ namespace APD.Networking.ClientApplication
 
         private void buttonSend_Click(object sender, EventArgs e)
         {
+            SendMessage();
+        }
+
+        private void textBoxMessage_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                SendMessage();
+            }
+        }
+
+        private void SendMessage()
+        {
             var destinationUsername = panelClientList
                 .Controls.OfType<RadioButton>()
                 .First(x => x.Checked)
@@ -137,7 +151,6 @@ namespace APD.Networking.ClientApplication
             client.SendChat(textBoxMessage.Text, destinationUsername);
 
             textBoxChat.Text += $"{DateTime.Now.ToShortTimeString()} [{client.Username} -> {destinationUsername}]: {textBoxMessage.Text}{Environment.NewLine}";
-
             textBoxMessage.Text = string.Empty;
         }
 

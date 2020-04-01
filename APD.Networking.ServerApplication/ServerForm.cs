@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace APD.Networking.ServerApplication
@@ -20,6 +21,8 @@ namespace APD.Networking.ServerApplication
                     var selectedPort = (int)numericUpDownPort.Value;
 
                     server = new Server(selectedPort);
+                    server.OnClientConnected += OnClientConnected;
+                    server.OnClientDisconnected += OnClientDisconnected;
 
                     buttonServerStatus.Text = StopServerText;
 
@@ -29,6 +32,7 @@ namespace APD.Networking.ServerApplication
                 else
                 {
                     server?.Stop();
+                    NumberOfConnectedClients = 0;
 
                     buttonServerStatus.Text = StartServerText;
 
@@ -38,9 +42,29 @@ namespace APD.Networking.ServerApplication
             }
         }
 
+        private int NumberOfConnectedClients
+        {
+            get => Convert.ToInt32(labelClientsConnected.Text);
+            set
+            {
+                var methodInvoker = new MethodInvoker(() => labelClientsConnected.Text = value.ToString());
+                Invoke(methodInvoker);
+            }
+        }
+
         public ServerForm()
         {
             InitializeComponent();
+        }
+
+        private void OnClientConnected(string username)
+        {
+            NumberOfConnectedClients++;
+        }
+
+        private void OnClientDisconnected(string username)
+        {
+            NumberOfConnectedClients--;
         }
 
         private void buttonServerStatus_Click(object sender, System.EventArgs e)

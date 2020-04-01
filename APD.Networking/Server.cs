@@ -19,6 +19,12 @@ namespace APD.Networking
 
         public int Port { get; }
 
+        public delegate void ClientConnected(string username);
+        public ClientConnected OnClientConnected { get; set; } = delegate(string username) {  };
+
+        public delegate void ClientDisconnected(string username);
+        public ClientDisconnected OnClientDisconnected { get; set; } = delegate (string username) { };
+
         public Server(int port)
         {
             // TODO: Check if port is already used
@@ -101,6 +107,8 @@ namespace APD.Networking
                 var senderListener = listeners[message.SourceUsername];
                 listeners.Remove(message.SourceUsername);
                 senderListener?.Stop();
+
+                OnClientDisconnected(message.SourceUsername);
             }
 
             else if (messageType == MessageType.Chat)
@@ -138,6 +146,8 @@ namespace APD.Networking
 
             listeners.Add(username, listener);
             listener.Thread.Start();
+
+            OnClientConnected(username);
         }
 
         private void NotifyClientOfItsUsername(TcpClient tcpClient)

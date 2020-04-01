@@ -31,7 +31,12 @@ namespace APD.Networking.ClientApplication
             client.OnOtherClientDisconnected += OnOtherClientDisconnected;
             client.OnUsernameReceived += OnUsernameReceived;
             client.OnUsernameChanged += OnUsernameChanged;
-            
+            client.OnNotOk += OnNotOk;
+        }
+
+        private void OnNotOk(string message)
+        {
+            MessageBox.Show(message);
         }
 
         private void OnUsernameReceived(string username)
@@ -144,6 +149,19 @@ namespace APD.Networking.ClientApplication
         private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             client?.Stop();
+        }
+
+        private void buttonEditUsername_Click(object sender, EventArgs e)
+        {
+            var newUsernameForm = new NewUsernameForm();
+            var result = newUsernameForm.ShowDialog();
+
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+
+            client.ChangeUsername(newUsernameForm.NewUsername);
         }
     }
 }

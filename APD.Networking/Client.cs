@@ -45,6 +45,9 @@ namespace APD.Networking
         public delegate void OtherClientDisconnected(string username);
         public OtherClientDisconnected OnOtherClientDisconnected { get; set; } = delegate(string s) {  };
 
+        public delegate void NotOk(string message);
+        public NotOk OnNotOk { get; set; } = delegate(string message) { };
+
         public Client(string hostname, int port)
         {
             tcpClient = new TcpClient(hostname, port);
@@ -91,6 +94,19 @@ namespace APD.Networking
 
             var messageAsString = messageMapper.GetStringFromMessage(message);
             streamWriter.WriteLine(messageAsString);
+            streamWriter.Flush();
+        }
+
+        public void ChangeUsername(string newUsername)
+        {
+            var message = new Message
+            {
+                MessageType = MessageType.UsernameChanged,
+                SourceUsername = Username,
+                DestinationUsername = newUsername
+            };
+
+            streamWriter.WriteLine(messageMapper.GetStringFromMessage(message));
             streamWriter.Flush();
         }
  
@@ -141,8 +157,15 @@ namespace APD.Networking
 
             if (messageType == MessageType.UsernameChanged)
             {
-                OnUsernameChanged(Username, message.Value);
-                Username = message.Value;
+                var index = otherClients.IndexOf(message.SourceUsername);
+                otherClients[index] = message.DestinationUsername;
+
+                OnUsernameChanged(message.SourceUsername, message.DestinationUsername);
+            }
+
+            if (messageType == MessageType.NotOk)
+            {
+                OnNotOk(message.Value);
             }
         }
     }

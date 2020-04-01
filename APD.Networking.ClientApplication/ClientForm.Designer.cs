@@ -39,8 +39,8 @@
             this.checkConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxUsername = new System.Windows.Forms.TextBox();
-            this.buttonEditUsername = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
+            this.buttonEditUsername = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,7 +48,7 @@
             // 
             this.buttonSend.Enabled = false;
             this.buttonSend.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSend.Location = new System.Drawing.Point(1025, 444);
+            this.buttonSend.Location = new System.Drawing.Point(951, 445);
             this.buttonSend.Name = "buttonSend";
             this.buttonSend.Size = new System.Drawing.Size(89, 26);
             this.buttonSend.TabIndex = 11;
@@ -60,20 +60,20 @@
             // 
             this.textBoxMessage.BackColor = System.Drawing.SystemColors.ControlDark;
             this.textBoxMessage.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxMessage.Location = new System.Drawing.Point(298, 445);
+            this.textBoxMessage.Location = new System.Drawing.Point(274, 446);
             this.textBoxMessage.Multiline = true;
             this.textBoxMessage.Name = "textBoxMessage";
-            this.textBoxMessage.Size = new System.Drawing.Size(721, 26);
+            this.textBoxMessage.Size = new System.Drawing.Size(671, 26);
             this.textBoxMessage.TabIndex = 10;
             // 
             // textBoxChat
             // 
             this.textBoxChat.BackColor = System.Drawing.SystemColors.AppWorkspace;
-            this.textBoxChat.Location = new System.Drawing.Point(297, 64);
+            this.textBoxChat.Location = new System.Drawing.Point(273, 65);
             this.textBoxChat.Multiline = true;
             this.textBoxChat.Name = "textBoxChat";
             this.textBoxChat.ReadOnly = true;
-            this.textBoxChat.Size = new System.Drawing.Size(817, 362);
+            this.textBoxChat.Size = new System.Drawing.Size(767, 364);
             this.textBoxChat.TabIndex = 9;
             // 
             // panelClientList
@@ -91,7 +91,7 @@
             this.connectionToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1126, 27);
+            this.menuStrip1.Size = new System.Drawing.Size(1103, 27);
             this.menuStrip1.TabIndex = 12;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -147,17 +147,6 @@
             this.textBoxUsername.Size = new System.Drawing.Size(211, 26);
             this.textBoxUsername.TabIndex = 13;
             // 
-            // buttonEditUsername
-            // 
-            this.buttonEditUsername.BackgroundImage = global::APD.Networking.ClientApplication.Properties.Resources.EditIcon2;
-            this.buttonEditUsername.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonEditUsername.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonEditUsername.Location = new System.Drawing.Point(236, 65);
-            this.buttonEditUsername.Name = "buttonEditUsername";
-            this.buttonEditUsername.Size = new System.Drawing.Size(31, 26);
-            this.buttonEditUsername.TabIndex = 14;
-            this.buttonEditUsername.UseVisualStyleBackColor = true;
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -168,12 +157,24 @@
             this.label2.TabIndex = 15;
             this.label2.Text = "Username";
             // 
+            // buttonEditUsername
+            // 
+            this.buttonEditUsername.BackgroundImage = global::APD.Networking.ClientApplication.Properties.Resources.EditIcon2;
+            this.buttonEditUsername.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.buttonEditUsername.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonEditUsername.Location = new System.Drawing.Point(236, 65);
+            this.buttonEditUsername.Name = "buttonEditUsername";
+            this.buttonEditUsername.Size = new System.Drawing.Size(31, 26);
+            this.buttonEditUsername.TabIndex = 14;
+            this.buttonEditUsername.UseVisualStyleBackColor = true;
+            this.buttonEditUsername.Click += new System.EventHandler(this.buttonEditUsername_Click);
+            // 
             // ClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.WindowFrame;
-            this.ClientSize = new System.Drawing.Size(1126, 539);
+            this.ClientSize = new System.Drawing.Size(1103, 487);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.buttonEditUsername);
             this.Controls.Add(this.textBoxUsername);

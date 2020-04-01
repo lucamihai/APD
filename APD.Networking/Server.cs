@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net.Sockets;
 using System.Threading;
 using APD.Networking.Entities;
@@ -70,7 +69,7 @@ namespace APD.Networking
                 madeConnections++;
                 AddTcpClient(tcpClient);
 
-                NotifyClientOfItsUsername(tcpClient);
+                NotifyClientOfItsUsername(tcpClient, listeners.First(x => x.Value.TcpClient == tcpClient).Key);
                 NotifyClientOfOtherConnectedClients(tcpClient);
                 NotifyOtherClientsOfClientConnection(tcpClient);
             }
@@ -103,9 +102,9 @@ namespace APD.Networking
                 return;
             }
 
-            else if (messageType == MessageType.UsernameSent)
+            else if (messageType == MessageType.UsernameChanged)
             {
-
+                OnChangeUsername(sender, message.SourceUsername, message.DestinationUsername);
             }
 
             else if (messageType == MessageType.Disconnect)
@@ -157,12 +156,12 @@ namespace APD.Networking
             OnClientConnected(username);
         }
 
-        private void NotifyClientOfItsUsername(TcpClient tcpClient)
+        private void NotifyClientOfItsUsername(TcpClient tcpClient, string username)
         {
             var message = new Message
             {
                 MessageType = MessageType.UsernameSent,
-                Value = listeners.First(x => x.Value.TcpClient == tcpClient).Key
+                Value = username
             };
 
             SendMessageToClient(message, tcpClient);
@@ -221,6 +220,46 @@ namespace APD.Networking
             foreach (var otherTcpClient in otherClients)
             {
                 SendMessageToClient(message, otherTcpClient);
+            }
+        }
+
+        private void OnChangeUsername(TcpClient sender, string oldUsername, string newUsername)
+        {
+            var usernameAlreadyExists = listeners.Keys.Contains(newUsername);
+
+            if (usernameAlreadyExists)
+            {
+                var message = new Message {MessageType = MessageType.NotOk, Value = $"Username '{newUsername}' is already used"};
+                SendMessageToClient(message, sender);
+            }
+            else
+            {
+                var listener = listeners[oldUsername];
+                listeners.Add(newUsername, listener);
+                listeners.Remove(oldUsername);
+
+                NotifyClientOfItsUsername(sender, newUsername);
+                NotifyOtherClientsOfChangedUsername(sender, oldUsername, newUsername);
+            }
+        }
+
+        private void NotifyOtherClientsOfChangedUsername(TcpClient sender, string oldUsername, string newUsername)
+        {
+            var otherClients = listeners
+                .Values
+                .Select(x => x.TcpClient)
+                .Where(x => x != sender);
+
+            var message = new Message
+            {
+                MessageType = MessageType.UsernameChanged,
+                SourceUsername = oldUsername,
+                DestinationUsername = newUsername
+            };
+
+            foreach (var otherClient in otherClients)
+            {
+                SendMessageToClient(message, otherClient);
             }
         }
     }

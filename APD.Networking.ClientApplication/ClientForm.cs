@@ -29,7 +29,15 @@ namespace APD.Networking.ClientApplication
             client.OnChatReceived += OnChatReceived;
             client.OnOtherClientConnected += OnOtherClientConnected;
             client.OnOtherClientDisconnected += OnOtherClientDisconnected;
+            client.OnUsernameReceived += OnUsernameReceived;
             client.OnUsernameChanged += OnUsernameChanged;
+            
+        }
+
+        private void OnUsernameReceived(string username)
+        {
+            var methodInvoker = new MethodInvoker(() => textBoxUsername.Text = username);
+            Invoke(methodInvoker);
         }
 
         private void OnChatReceived(string chatMessage, string sourceUsername, string destinationUsername)
@@ -129,6 +137,11 @@ namespace APD.Networking.ClientApplication
         }
 
         private void ClientForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            client?.Stop();
+        }
+
+        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             client?.Stop();
         }

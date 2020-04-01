@@ -36,6 +36,9 @@ namespace APD.Networking
         public delegate void UsernameChanged(string oldUsername, string newUsername);
         public UsernameChanged OnUsernameChanged { get; set; } = delegate(string oldUsername, string newUsername) { };
 
+        public delegate void UsernameReceived(string username);
+        public UsernameReceived OnUsernameReceived { get; set; } = delegate(string username) { };
+
         public delegate void OtherClientConnected(string username);
         public OtherClientConnected OnOtherClientConnected { get; set; } = delegate(string s) {  };
 
@@ -111,6 +114,11 @@ namespace APD.Networking
                 OnChatReceived(message.Value, message.SourceUsername, message.DestinationUsername);
             }
 
+            if (messageType == MessageType.Disconnect)
+            {
+                this.Stop();
+            }
+
             if (messageType == MessageType.ClientConnected)
             {
                 var otherClientUsername = message.Value;
@@ -125,7 +133,13 @@ namespace APD.Networking
                 OnOtherClientDisconnected(otherClientUsername);
             }
 
-            if (messageType == MessageType.SendUsername)
+            if (messageType == MessageType.UsernameSent)
+            {
+                OnUsernameReceived(message.Value);
+                Username = message.Value;
+            }
+
+            if (messageType == MessageType.UsernameChanged)
             {
                 OnUsernameChanged(Username, message.Value);
                 Username = message.Value;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Sockets;
 using System.Threading;
 using APD.Networking.Entities;
@@ -47,8 +48,15 @@ namespace APD.Networking
 
             threadNewConnections.Abort();
 
+            var messageDisconnect = new Message {MessageType = MessageType.Disconnect};
+
             foreach (var listener in listeners.Values)
             {
+                var clientStream = listener.TcpClient.GetStream();
+                var streamWriter = new StreamWriter(clientStream);
+
+                streamWriter.WriteLine(messageMapper.GetStringFromMessage(messageDisconnect));
+
                 listener.Thread.Abort();
                 listener.TcpClient.Close();
             }
@@ -95,7 +103,7 @@ namespace APD.Networking
                 return;
             }
 
-            else if (messageType == MessageType.SendUsername)
+            else if (messageType == MessageType.UsernameSent)
             {
 
             }
@@ -103,12 +111,11 @@ namespace APD.Networking
             else if (messageType == MessageType.Disconnect)
             {
                 NotifyOtherClientsOfDisconnectedClient(sender);
+                OnClientDisconnected(message.SourceUsername);
 
                 var senderListener = listeners[message.SourceUsername];
                 listeners.Remove(message.SourceUsername);
                 senderListener?.Stop();
-
-                OnClientDisconnected(message.SourceUsername);
             }
 
             else if (messageType == MessageType.Chat)
@@ -154,7 +161,7 @@ namespace APD.Networking
         {
             var message = new Message
             {
-                MessageType = MessageType.SendUsername,
+                MessageType = MessageType.UsernameSent,
                 Value = listeners.First(x => x.Value.TcpClient == tcpClient).Key
             };
 

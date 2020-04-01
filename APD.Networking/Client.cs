@@ -95,8 +95,6 @@ namespace APD.Networking
         {
             while (true)
             {
-                var stream = tcpClient.GetStream();
-                var streamReader = new StreamReader(stream);
                 var streamMessage = streamReader.ReadLine();
                 var message = messageMapper.GetMessageFromString(streamMessage);
 
